@@ -1,7 +1,37 @@
 <?php
   // Indication de la page
   $page = 'menu';
-  require('inclusions/entete.inc.php');  
+  require('inclusions/entete.inc.php');
+
+  // Intégrer les données du menu des plats de la BD leila
+  // 1) Obtenir une connexion et configurer l'encodage de caractères
+  $cnx = mysqli_connect('localhost', 'root', '', 'leila');
+  mysqli_set_charset($cnx, 'utf8mb4');
+
+  // 2) Écrire et soumettre la requêtes SQL pour obtenir l'info sur les 
+  // plats requise pour l'affichage de cette page.
+  $requetePlatsParCategories = "SELECT 
+      c.nom AS nomCategorie,
+      p.*
+      FROM plat AS p JOIN categorie AS c ON p.id_categorie = c.id
+      ORDER BY rang
+  ";
+  $resultatPlats = mysqli_query($cnx, $requetePlatsParCategories);
+
+  // 3) Extraire un tableau représentant le jeu d'enregistrements 
+  // résultant à l'étape 2 (chaque enregistrement dans un tableau associatif)
+  $platsAvecCategories = mysqli_fetch_all($resultatPlats, MYSQLI_ASSOC);
+
+  // TEST : Afficher le contenu du tableau pour débogage
+  // print_r($platsAvecCategories);
+  // 4) Réorganiser le tableau résultant pour grouper les plats par nom
+  // de catégorie
+  // Tableau des plats regroupés par nom de catégorie.
+  $platsGroupes = [];
+  foreach ($platsAvecCategories as $plat) {
+    $platsGroupes[$plat['nomCategorie']][] = $plat;
+  }
+  // print_r($platsGroupes);
 ?>
       <div class="titre-page">
         <h1>MENU</h1>
@@ -27,15 +57,29 @@
         </blockquote>
       </div>
       <div class="carte">
+        <?php foreach($platsGroupes as $section=>$plats) : ?>
         <section>
-          <h2>Entrées</h2>
+          <h2><?= $section; ?></h2>
           <ul>
-            <li>
-              <span>Foie gras de canard poêlé aux coings<br><i>gâteau et infusion de coing à la verveine</i></span>
-              <span class="prix"><i class="article-menu-portion">(pour 2 personnes)</i>34</span>
-            </li>
+            <?php foreach($plats as $plat) : ?>
+              <li>
+                <span>
+                  <?= $plat['nom']; ?>
+                  <?php if($plat['detail']) : ?>
+                    <br><i><?= $plat['detail']; ?></i>
+                  <?php endif; ?>
+                </span>
+                <span class="prix">
+                  <?php if($plat['portion'] > 1) : ?>
+                    <i class="article-menu-portion">(pour <?= $plat['portion']; ?> personnes)</i>
+                  <?php endif; ?>
+                  <?= $plat['prix']; ?>
+                </span>
+              </li>
+            <?php endforeach; ?>
           </ul>
         </section>
+        <?php endforeach; ?>
       </div>
     </div>
 <?php
