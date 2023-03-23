@@ -23,7 +23,8 @@
   $platsAvecCategories = mysqli_fetch_all($resultatPlats, MYSQLI_ASSOC);
 
   // TEST : Afficher le contenu du tableau pour débogage
-  // print_r($platsAvecCategories);
+  print_r($platsAvecCategories);
+  
   // 4) Réorganiser le tableau résultant pour grouper les plats par nom
   // de catégorie
   // Tableau des plats regroupés par nom de catégorie.
@@ -31,7 +32,7 @@
   foreach ($platsAvecCategories as $plat) {
     $platsGroupes[$plat['nomCategorie']][] = $plat;
   }
-  // print_r($platsGroupes);
+  //print_r($platsGroupes);
 ?>
       <div class="titre-page">
         <h1>MENU</h1>
