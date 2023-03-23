@@ -3,36 +3,11 @@
   $page = 'menu';
   require('inclusions/entete.inc.php');
 
-  // Intégrer les données du menu des plats de la BD leila
-  // 1) Obtenir une connexion et configurer l'encodage de caractères
-  $cnx = mysqli_connect('localhost', 'root', '', 'leila');
-  mysqli_set_charset($cnx, 'utf8mb4');
-
-  // 2) Écrire et soumettre la requêtes SQL pour obtenir l'info sur les 
-  // plats requise pour l'affichage de cette page.
-  $requetePlatsParCategories = "SELECT 
-      c.nom AS nomCategorie,
-      p.*
-      FROM plat AS p JOIN categorie AS c ON p.id_categorie = c.id
-      ORDER BY rang
-  ";
-  $resultatPlats = mysqli_query($cnx, $requetePlatsParCategories);
-
-  // 3) Extraire un tableau représentant le jeu d'enregistrements 
-  // résultant à l'étape 2 (chaque enregistrement dans un tableau associatif)
-  $platsAvecCategories = mysqli_fetch_all($resultatPlats, MYSQLI_ASSOC);
-
-  // TEST : Afficher le contenu du tableau pour débogage
-  print_r($platsAvecCategories);
-  
-  // 4) Réorganiser le tableau résultant pour grouper les plats par nom
-  // de catégorie
-  // Tableau des plats regroupés par nom de catégorie.
-  $platsGroupes = [];
-  foreach ($platsAvecCategories as $plat) {
-    $platsGroupes[$plat['nomCategorie']][] = $plat;
-  }
-  //print_r($platsGroupes);
+  // Obtenir les plats de la BD
+  // Inclure les fichiers requis
+  require('lib/sql.lib.php');
+  require('lib/menu-data.lib.php');
+  $platsGroupes = lireTout(true);
 ?>
       <div class="titre-page">
         <h1>MENU</h1>

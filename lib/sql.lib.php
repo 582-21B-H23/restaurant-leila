@@ -17,6 +17,18 @@ function soumettreRequete($cnx, $req) {
 
 // Les 4 opérations CRUD
 
+
+/**
+ * Exécute une requête SQL de type SELECT
+ *
+ * @param  MySQLi $cnx : identifiant de connexion MySQLi obtenu préalablement
+ * @param  string $req : requête SQL SELECT
+ * @param  int $mode : constante pour indiquer si on veut un tableau 
+ *              associatif (par défaut) ou autre
+ * @see https://www.php.net/manual/en/mysqli-result.fetch-all.php
+ * 
+ * @return array|boolean :
+ */
 function lire($cnx, $req, $mode=MYSQLI_ASSOC) {
   $resultat = soumettreRequete($cnx, $req);
   if($resultat) {
